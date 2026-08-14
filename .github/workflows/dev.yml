@@ -9,6 +9,6 @@ permissions:
   
 jobs:
   deploy:
-    uses: SpurthiHiremath/GithubActions_ReusableWorkflow/.github/workflows/reusable.yml@main
+    uses: ./.github/workflows/reusable.yml
     with:
       environment: dev
