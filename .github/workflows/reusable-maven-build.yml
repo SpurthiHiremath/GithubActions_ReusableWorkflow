@@ -30,13 +30,9 @@ jobs:
       - name: Build Maven project
         run: mvn clean package
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
-
-      - name: Upload JAR to S3
+      - name: Print AWS Values
         run: |
-          aws s3 cp target/*.jar \
-            s3://${{ vars.S3_BUCKET }}/${{ inputs.environment }}/
+             echo "region: ${{ vars.AWS_REGION }}"
+             echo "arn: ${{ vars.AWS_ROLE_ARN }}"
+             echo "bucket: ${{ vars.S3_BUCKET }}"
+
