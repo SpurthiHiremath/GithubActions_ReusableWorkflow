@@ -42,7 +42,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Configure AWS credentials - DEV
+      - name: Configure AWS credentials - PROD
         if: inputs.environment == 'prod'
         uses: aws-actions/configure-aws-credentials@v4
         with:
