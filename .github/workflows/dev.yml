@@ -9,6 +9,6 @@ permissions:
   
 jobs:
   deploy:
-    uses: ./.github/workflows/reusable.yml
+    uses: SpurthiHiremath/GithubActions_ReusableWorkflow/.github/workflows/reusable-maven-build.yml@main
     with:
       environment: dev
