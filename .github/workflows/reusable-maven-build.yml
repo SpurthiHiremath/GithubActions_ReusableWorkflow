@@ -55,8 +55,8 @@ jobs:
         
       - name: Upload JAR to S3
         run: |
-           if [ "${{ inputs.environment}} == "dev"] || ["${{ inputs.environment}} == "test" ]; then
+           if [ "${{ inputs.environment}}" == "dev"] || ["${{ inputs.environment}}" == "test" ]; then
              aws s3 cp target/*.jar s3://${{ vars.S3_BUCKET_DEV_TEST }}/${{ inputs.environment }}/
-           elif [ "${{inputs.environment}} == "prod" ]; then
+           elif [ "${{inputs.environment}}" == "prod" ]; then
              aws s3 cp target/*.jar s3://$${{ vars.S3_BUCKET_PROD }}/${{ inputs.environment }}/
            fi
