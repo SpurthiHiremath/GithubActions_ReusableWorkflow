@@ -1,0 +1,10 @@
+name: Dev Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      environment: dev
