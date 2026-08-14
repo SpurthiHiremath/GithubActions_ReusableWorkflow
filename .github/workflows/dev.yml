@@ -8,7 +8,8 @@ permissions:
   id-token: write
   
 jobs:
-  deploy:
+  build:
     uses: SpurthiHiremath/GithubActions_ReusableWorkflow/.github/workflows/reusable-maven-build.yml@main
     with:
       environment: dev
+    secrets: inherit
