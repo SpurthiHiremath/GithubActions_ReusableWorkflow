@@ -1,0 +1,15 @@
+name: Production Deployment
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  
+jobs:
+  build:
+    uses: SpurthiHiremath/GithubActions_ReusableWorkflow/.github/workflows/reusable-maven-build.yml@main
+    with:
+      environment: prod
+    secrets: inherit
