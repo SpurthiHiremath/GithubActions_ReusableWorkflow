@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Workflow-level concurrency: cancels stale runs of the whole workflow
+# for the same branch/PR when a new commit is pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Parallel jobs via matrix ────────────────────────────────
+  # These all run at the same time, up to max-parallel limit
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 4          # cap simultaneous matrix jobs (default: unlimited)
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [18, 20, 22]
+    # Each matrix combination gets its own concurrency group so
+    # parallel legs don't cancel each other — only re-runs of the
+    # SAME leg on the SAME ref get cancelled
+    concurrency:
+      group: test-${{ matrix.os }}-${{ matrix.node }}-${{ github.head_ref || github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      - run: npm test
+
+  # ── Independent parallel jobs (no matrix, just run together) ─
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run lint
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm audit --audit-level=high
+
+  # ── Fan-in: waits for all parallel jobs above before deploying ─
+  deploy:
+    needs: [test, lint, security-scan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    # Global lock — only ONE deploy at a time, across all refs,
+    # and never cancel one mid-flight
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: echo "Deploying..."
