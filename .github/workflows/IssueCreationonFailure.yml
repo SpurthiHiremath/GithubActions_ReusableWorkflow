@@ -1,0 +1,17 @@
+  - name: Create issue on failure
+    if: failure()
+    uses: actions/github-script@v7
+    with:
+      script: |
+        await github.rest.issues.create({
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        title: `Workflow failed: ${context.workflow}`,
+        body: `
+        Workflow: ${context.workflow}
+        Run ID: ${context.runId}
+        Branch: ${context.ref}
+        Commit: ${context.sha}
+        `,
+        labels: ['workflow-failure']
+      })
